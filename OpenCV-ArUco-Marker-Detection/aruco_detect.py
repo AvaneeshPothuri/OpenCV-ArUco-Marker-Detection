@@ -15,19 +15,19 @@ def detect_and_mark_markers(image_path):
 
     # Detect markers for each dictionary size
     corners, ids, _ = cv2.aruco.detectMarkers(image, aruco_dict_4x4, parameters=parameters)
-    draw_markers(image, corners, ids, color=(0, 0, 255))
+    draw_markers(image, corners, ids, color=(0, 0, 255))  # Draw markers for 4x4 dictionary with blue color
 
     corners, ids, _ = cv2.aruco.detectMarkers(image, aruco_dict_5x5, parameters=parameters)
-    draw_markers(image, corners, ids, color=(0, 255, 0))
+    draw_markers(image, corners, ids, color=(0, 255, 0))  # Draw markers for 5x5 dictionary with green color
 
     corners, ids, _ = cv2.aruco.detectMarkers(image, aruco_dict_6x6, parameters=parameters)
-    draw_markers(image, corners, ids, color=(255, 0, 0))
+    draw_markers(image, corners, ids, color=(255, 0, 0))  # Draw markers for 6x6 dictionary with red color
 
     corners, ids, _ = cv2.aruco.detectMarkers(image, aruco_dict_7x7, parameters=parameters)
-    draw_markers(image, corners, ids, color=(255, 255, 0))
+    draw_markers(image, corners, ids, color=(255, 255, 0))  # Draw markers for 7x7 dictionary with yellow color
 
-    # Step 5: Resize the image to fit the screen or make it larger if it's smaller
-    max_display_size = 800
+    # Resize the image to fit the screen or make it larger if it's smaller
+    max_display_size = 1500
     height, width = image.shape[:2]
     scale_factor = max_display_size / max(height, width)
     if height > max_display_size or width > max_display_size:
@@ -35,20 +35,21 @@ def detect_and_mark_markers(image_path):
     else:
         image = cv2.resize(image, (int(width * scale_factor), int(height * scale_factor)))
 
-    # Step 6: Display the resulting image with detected markers and IDs
+    # Display the resulting image with detected markers and IDs
     cv2.imshow("ArUco Marker Detection Result", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
 def draw_markers(image, corners, ids, color):
+    # Check if markers and IDs are detected
     if ids is not None:
         for i in range(len(ids)):
             if len(corners) > i:
-                # Reshape corners to match the format expected by drawDetectedMarkers
-                current_corners = [corners[i]]
-                cv2.aruco.drawDetectedMarkers(image, current_corners, ids[i], borderColor=color)
-                org = (int(corners[i][0][0][0]), int(corners[i][0][0][1]))
-                cv2.putText(image, str(ids[i][0]), org, cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)
+                # Draw detected markers on the image
+                current_corners = [corners[i]]  # Get corners of the current marker
+                cv2.aruco.drawDetectedMarkers(image, current_corners, ids[i], borderColor=color)  # Draw marker outline
+                org = (int(corners[i][0][0][0]), int(corners[i][0][0][1]))  # Position for displaying marker ID
+                cv2.putText(image, str(ids[i][0]), org, cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)  # Display marker ID
 
 
 if __name__ == "__main__":
