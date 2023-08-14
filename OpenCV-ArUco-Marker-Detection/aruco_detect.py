@@ -17,26 +17,28 @@ def detect_and_mark_markers(image_path):
     # Load the image
     image = cv2.imread(image_path)
 
-    # Define the ArUco dictionaries for different marker sizes
-    aruco_dict_4x4 = cv2.aruco.DICT_4X4_250
-    aruco_dict_5x5 = cv2.aruco.DICT_5X5_250
-    aruco_dict_6x6 = cv2.aruco.DICT_6X6_250
-    aruco_dict_7x7 = cv2.aruco.DICT_7X7_250
+    # Define a list of ArUco dictionaries for different marker sizes
+    aruco_dicts = [
+        cv2.aruco.DICT_4X4_250,
+        cv2.aruco.DICT_5X5_250,
+        cv2.aruco.DICT_6X6_250,
+        cv2.aruco.DICT_7X7_250
+    ]
 
     # Create the detector parameters object
     parameters = cv2.aruco.DetectorParameters()
 
-    # Detect markers for each dictionary size and draw them
-    detect_and_draw(image, aruco_dict_4x4, parameters)
-    detect_and_draw(image, aruco_dict_5x5, parameters)
-    detect_and_draw(image, aruco_dict_6x6, parameters)
-    detect_and_draw(image, aruco_dict_7x7, parameters)
+    # Loop through the dictionaries and detect markers
+    for aruco_dict in aruco_dicts:
+        detect_and_draw(image, aruco_dict, parameters)
 
     # Resize the image and display the result
     display_image(image)
 
 def detect_and_draw(image, aruco_dict, parameters):
-    corners, ids, _ = cv2.aruco.detectMarkers(image, cv2.aruco.getPredefinedDictionary(aruco_dict), parameters=parameters)
+    # Get the dictionary object based on the constant
+    dictionary = cv2.aruco.getPredefinedDictionary(aruco_dict)
+    corners, ids, _ = cv2.aruco.detectMarkers(image, dictionary, parameters=parameters)
     draw_markers(image, corners, ids, MARKER_COLORS[aruco_dict])
 
 def draw_markers(image, corners, ids, color):
